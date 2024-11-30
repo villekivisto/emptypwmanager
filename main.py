@@ -1,6 +1,5 @@
 import json
 
-# Caesar cipher encryption and decryption functions (pre-implemented)
 def caesar_encrypt(text, shift):
     encrypted_text = ""
     for char in text:
@@ -20,12 +19,10 @@ def caesar_encrypt(text, shift):
 def caesar_decrypt(text, shift):
     return caesar_encrypt(text, -shift)
 
-# Initialize empty lists to store encrypted passwords, websites, and usernames
 encrypted_passwords = []
 websites = []
 usernames = []
 
-# Function to add a new password 
 def add_password():
     """
     Add a new password to the password manager.
@@ -46,7 +43,6 @@ def add_password():
     encrypted_passwords.append(encrypted_password)
     print("Password added successfully!")
 
-# Function to retrieve a password 
 def get_password():
     """
     Retrieve a password for a given website.
@@ -65,7 +61,6 @@ def get_password():
     else:
         print("Website not found.")
 
-# Function to save passwords to a JSON file 
 def save_passwords():
     """
     Save the password vault to a file.
@@ -85,7 +80,6 @@ def save_passwords():
         json.dump(data, file)
     print("Passwords saved successfully!")
 
-# Function to load passwords from a JSON file 
 def load_passwords():
     """
     Load passwords from a file into the password vault.
@@ -107,7 +101,6 @@ def load_passwords():
     except FileNotFoundError:
         print("No saved passwords found.")
 
-# Main method
 def main():
     """
     Implement the user interface for the password manager.
@@ -141,6 +134,5 @@ def main():
         else:
             print("Invalid choice. Please try again.")
 
-# Execute the main function when the program is run
 if __name__ == "__main__":
     main()
