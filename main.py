@@ -1,17 +1,12 @@
-import json
+import random
+import string
 
 def caesar_encrypt(text, shift):
     encrypted_text = ""
     for char in text:
         if char.isalpha():
-            shifted = ord(char) + shift
-            if char.islower():
-                if shifted > ord('z'):
-                    shifted -= 26
-            elif char.isupper():
-                if shifted > ord('Z'):
-                    shifted -= 26
-            encrypted_text += chr(shifted)
+            shift_base = ord('A') if char.isupper() else ord('a')
+            encrypted_text += chr((ord(char) - shift_base + shift) % 26 + shift_base)
         else:
             encrypted_text += char
     return encrypted_text
@@ -19,120 +14,58 @@ def caesar_encrypt(text, shift):
 def caesar_decrypt(text, shift):
     return caesar_encrypt(text, -shift)
 
-encrypted_passwords = []
-websites = []
-usernames = []
+def check_password_strength(password):
+    if (len(password) >= 8 and
+        any(char.isdigit() for char in password) and
+        any(char.isupper() for char in password) and
+        any(char.islower() for char in password) and
+        any(char in string.punctuation for char in password)):
+        return "Vahva"
+    return "Heikko"
 
-def add_password():
-    """
-    Add a new password to the password manager.
+def generate_random_password(length=12):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(characters) for _ in range(length))
 
-    This function prompts the user for the website, username, and password and stores them
-    to lists with the same index.
+passwords = {}
 
-    Returns:
-        None
-    """
-    website = input("Enter website: ")
-    username = input("Enter username: ")
-    password = input("Enter password: ")
-    
+def add_password(site, username, password):
     encrypted_password = caesar_encrypt(password, 3)
-    websites.append(website)
-    usernames.append(username)
-    encrypted_passwords.append(encrypted_password)
-    print("Password added successfully!")
+    passwords[site] = (username, encrypted_password)
+    print(f"Salasana tallennettu: {site} -> Käyttäjä: {username}")
 
-def get_password():
-    """
-    Retrieve a password for a given website.
-
-    This function prompts the user for the website name and
-    then displays the username and decrypted password for that website.
-
-    Returns:
-        None
-    """
-    website = input("Enter website: ")
-    if website in websites:
-        index = websites.index(website)
-        decrypted_password = caesar_decrypt(encrypted_passwords[index], 3)
-        print(f"Username: {usernames[index]}\nPassword: {decrypted_password}")
+def get_password(site):
+    if site in passwords:
+        username, encrypted_password = passwords[site]
+        decrypted_password = caesar_decrypt(encrypted_password, 3)
+        print(f"Sivusto: {site} | Käyttäjä: {username} | Salasana: {decrypted_password}")
     else:
-        print("Website not found.")
-
-def save_passwords():
-    """
-    Save the password vault to a file.
-
-    This function saves passwords, websites, and usernames to a text
-    file named "vault.txt" in a structured format.
-
-    Returns:
-        None
-    """
-    data = {
-        "websites": websites,
-        "usernames": usernames,
-        "passwords": encrypted_passwords
-    }
-    with open("vault.txt", "w") as file:
-        json.dump(data, file)
-    print("Passwords saved successfully!")
-
-def load_passwords():
-    """
-    Load passwords from a file into the password vault.
-
-    This function loads passwords, websites, and usernames from a text
-    file named "vault.txt" and populates the respective lists.
-
-    Returns:
-        None
-    """
-    global websites, usernames, encrypted_passwords
-    try:
-        with open("vault.txt", "r") as file:
-            data = json.load(file)
-            websites = data["websites"]
-            usernames = data["usernames"]
-            encrypted_passwords = data["passwords"]
-        print("Passwords loaded successfully!")
-    except FileNotFoundError:
-        print("No saved passwords found.")
+        print("Sivustoa ei löytynyt.")
 
 def main():
-    """
-    Implement the user interface for the password manager.
-
-    This method provides a menu-driven interface for users to interact
-    with the password manager.
-
-    Returns:
-        None
-    """
     while True:
-        print("\nPassword Manager Menu:")
-        print("1. Add Password")
-        print("2. Get Password")
-        print("3. Save Passwords")
-        print("4. Load Passwords")
-        print("5. Quit")
-        
-        choice = input("Enter your choice: ")
-        
-        if choice == "1":
-            add_password()
-        elif choice == "2":
-            get_password()
-        elif choice == "3":
-            save_passwords()
-        elif choice == "4":
-            load_passwords()
-        elif choice == "5":
+        print("\n1. Lisää salasana")
+        print("2. Hae salasana")
+        print("3. Luo vahva salasana")
+        print("4. Lopeta")
+        valinta = input("Valitse toiminto: ")
+
+        if valinta == "1":
+            site = input("Sivuston nimi: ")
+            username = input("Käyttäjänimi: ")
+            password = input("Salasana: ")
+            print("Salasanan vahvuus:", check_password_strength(password))
+            add_password(site, username, password)
+        elif valinta == "2":
+            site = input("Sivuston nimi: ")
+            get_password(site)
+        elif valinta == "3":
+            length = int(input("Salasanan pituus (numeroina): "))
+            print("Satunnainen vahva salasana:", generate_random_password(length))
+        elif valinta == "4":
             break
         else:
-            print("Invalid choice. Please try again.")
+            print("Virheellinen valinta, yritä uudelleen.")
 
 if __name__ == "__main__":
     main()
