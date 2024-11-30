@@ -1,3 +1,5 @@
+import json
+import re
 import random
 import string
 
@@ -27,27 +29,57 @@ def generate_random_password(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(characters) for _ in range(length))
 
-passwords = {}
+encrypted_passwords = []
+websites = []
+usernames = []
 
 def add_password(site, username, password):
     encrypted_password = caesar_encrypt(password, 3)
-    passwords[site] = (username, encrypted_password)
+
+    encrypted_passwords.append(encrypted_password)
+    websites.append(site)
+    usernames.append(username)
+
     print(f"Salasana tallennettu: {site} -> Käyttäjä: {username}")
 
 def get_password(site):
-    if site in passwords:
-        username, encrypted_password = passwords[site]
-        decrypted_password = caesar_decrypt(encrypted_password, 3)
-        print(f"Sivusto: {site} | Käyttäjä: {username} | Salasana: {decrypted_password}")
-    else:
-        print("Sivustoa ei löytynyt.")
+    for i in range(len(websites)):
+        if websites[i] == site:
+            decrypted_password = caesar_decrypt(encrypted_passwords[i], 3)
+            print(f"Sivusto: {websites[i]} | Käyttäjä: {usernames[i]} | Salasana: {decrypted_password}")
+            return
+    print("Sivustoa ei löytynyt.")
+
+def save_passwords():
+    magic = {}
+    magic["site"] = websites
+    magic["username"] = usernames
+    magic["password"] = encrypted_passwords
+
+    with open("vault.txt", "w") as tiedosto:
+        json.dump(magic, tiedosto)
+
+def load_passwords():
+    with open("vault.txt", "r") as tiedosto:
+        data = json.load(tiedosto)
+    global websites
+    global usernames
+    global encrypted_passwords
+    websites = data["site"]
+    usernames = data["username"]
+    encrypted_passwords = data["password"]
+
+    
 
 def main():
     while True:
+
         print("\n1. Lisää salasana")
         print("2. Hae salasana")
         print("3. Luo vahva salasana")
-        print("4. Lopeta")
+        print("4. Tallenna salasanat")
+        print("5. Lataa salasanat")
+        print("6. Lopeta")
         valinta = input("Valitse toiminto: ")
 
         if valinta == "1":
@@ -62,8 +94,14 @@ def main():
         elif valinta == "3":
             length = int(input("Salasanan pituus (numeroina): "))
             print("Satunnainen vahva salasana:", generate_random_password(length))
-        elif valinta == "4":
+        elif valinta == "6":
             break
+        elif valinta == "4":
+            save_passwords()
+            print("Tehty")
+        elif valinta == "5":
+            load_passwords()
+            print("Tehty")
         else:
             print("Virheellinen valinta, yritä uudelleen.")
 
