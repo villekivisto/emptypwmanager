@@ -1,6 +1,6 @@
 import json
-import re
 import random
+import re
 import string
 
 def caesar_encrypt(text, shift):
@@ -22,8 +22,8 @@ def check_password_strength(password):
         any(char.isupper() for char in password) and
         any(char.islower() for char in password) and
         any(char in string.punctuation for char in password)):
-        return "Vahva"
-    return "Heikko"
+        return "Salasana on vahva."
+    return "Salasana on heikko."
 
 def generate_random_password(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -98,10 +98,10 @@ def main():
             break
         elif valinta == "4":
             save_passwords()
-            print("Tehty")
+            print("Salasanat tallennettu onnistuneesti!")
         elif valinta == "5":
             load_passwords()
-            print("Tehty")
+            print("Salasanat ladattu onnistuneesti!")
         else:
             print("Virheellinen valinta, yritä uudelleen.")
 
