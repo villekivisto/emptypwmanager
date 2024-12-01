@@ -3,6 +3,8 @@ import random
 import re
 import string
 
+VAULT_TIEDOSTO = "vault.txt"
+
 def caesar_encrypt(text, shift):
     encrypted_text = ""
     for char in text:
@@ -56,11 +58,11 @@ def save_passwords():
     magic["username"] = usernames
     magic["password"] = encrypted_passwords
 
-    with open("vault.txt", "w") as tiedosto:
+    with open(VAULT_TIEDOSTO, "w") as tiedosto:
         json.dump(magic, tiedosto)
 
 def load_passwords():
-    with open("vault.txt", "r") as tiedosto:
+    with open(VAULT_TIEDOSTO, "r") as tiedosto:
         data = json.load(tiedosto)
     global websites
     global usernames
