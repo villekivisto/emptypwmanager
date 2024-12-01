@@ -98,10 +98,10 @@ def main():
             break
         elif valinta == "4":
             save_passwords()
-            print("Tehty")
+            print("Salasanat tallennettu onnistuneesti.")
         elif valinta == "5":
             load_passwords()
-            print("Tehty")
+            print("Salasanat ladattu onnistuneesti.")
         else:
             print("Virheellinen valinta, yritä uudelleen.")
 
